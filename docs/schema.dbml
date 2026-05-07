@@ -1,0 +1,100 @@
+Table Users [headercolor: #175e7a] {
+	id integer [ pk, increment, not null ]
+	Name varchar(255) [ not null ]
+	user_name varchar(255) [ not null, unique ]
+	About varchar(255)
+	Email varchar(255) [ unique ]
+	Phone varchar(255) [ unique ]
+	password_hash varchar(255) [ not null ]
+	created_at timestamp [ not null ]
+	profile_image_url varchar(255)
+	date_of_birth date
+	theme varchar(255) [ not null, default: 'light' ]
+}
+
+Table Posts [headercolor: #175e7a] {
+	id integer [ pk, increment, not null ]
+	image_url varchar(255) [ not null ]
+	user_id integer [ not null ]
+	caption varchar(255)
+	created_at timestamp [ not null ]
+}
+
+Table Comments [headercolor: #175e7a] {
+	id integer [ pk, increment, not null ]
+	content varchar(255) [ not null ]
+	post_id integer [ not null ]
+	user_id integer [ not null ]
+	created_at timestamp [ not null ]
+}
+
+Table Likes [headercolor: #175e7a] {
+	post_id integer [ pk, not null ]
+	user_id integer [ pk, not null ]
+	created_at timestamp [ not null ]
+
+	indexes {
+		(post_id, user_id) [ name: 'Likes_index_0', unique ]
+	}
+}
+
+Table Follows [headercolor: #175e7a] {
+	follower_id integer [ pk, not null ]
+	following_id integer [ pk, not null ]
+	created_at timestamp [ not null ]
+
+	indexes {
+		(follower_id, following_id) [ name: 'Follows_index_0', unique ]
+	}
+}
+
+Table Notifications [headercolor: #175e7a] {
+	id integer [ pk, increment, not null ]
+	recipient_id integer [ not null ]
+	sender_id integer [ not null ]
+	type varchar(255) [ not null ]
+	entity_type varchar(255)
+	entity_id integer
+	is_read boolean [ not null, default: false ]
+	created_at timestamp [ not null ]
+}
+
+Ref fk_Posts_user_id_Users {
+	Posts.user_id > Users.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_Comments_post_id_Posts {
+	Comments.post_id > Posts.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_Comments_user_id_Users {
+	Comments.user_id > Users.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_Likes_post_id_Posts {
+	Likes.post_id > Posts.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_Likes_user_id_Users {
+	Likes.user_id > Users.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_Follows_follower_id_Users {
+	Follows.follower_id > Users.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_Follows_following_id_Users {
+	Follows.following_id > Users.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_Notifications_sender_id_Users {
+	Notifications.sender_id > Users.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_Notifications_recipent_id_Users {
+	Notifications.recipient_id > Users.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_Notifications_entity_id_Posts {
+	Notifications.entity_id > Posts.id [ delete: cascade, update: no action ]
+}

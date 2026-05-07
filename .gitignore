@@ -1,0 +1,14 @@
+# Python
+api/venv/
+api/__pycache__/
+api/.env
+api/*.pyc
+
+# Node
+web/node_modules/
+web/.next/
+web/.env
+web/.env.local
+
+# General
+.DS_Store
