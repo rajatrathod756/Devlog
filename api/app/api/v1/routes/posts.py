@@ -1,8 +1,9 @@
-from fastapi import APIRouter, UploadFile, File, Depends
+from fastapi import APIRouter, UploadFile, File, Depends, Form
 from sqlalchemy.orm import Session
 
 from app.utils.file_upload import upload_image
 from app.core.dependencies import get_db
+from app.services.post_service import create_post_service
 from sqlalchemy import text
 
 
@@ -12,18 +13,15 @@ router = APIRouter()
 @router.post("/")
 async def create_post(
     image: UploadFile = File(...),
-    caption: str = "",
+    caption: str = Form(...),
     db: Session = Depends(get_db)
 ):
 
-    image_url = await upload_image(image)
-
-    
-
-    return {
-        "image_url": image_url,
-        "caption": caption
-    }
+    return await create_post_service(
+        image = image,
+        caption = caption,
+        db = db
+    )
     
     
 @router.get("/")
