@@ -5,6 +5,7 @@ from app.utils.file_upload import upload_image
 from app.core.dependencies import get_db
 from app.services.post_service import create_post_service
 from app.services.post_service import get_post_service
+from app.schemas.post import PostResponse
 
 from sqlalchemy import text
 
@@ -25,7 +26,7 @@ async def create_post(
         db = db
     )
 
-@router.get("/{post_id}")
+@router.get("/{post_id}", response_model=PostResponse)
 async def get_post(post_id:int,db : Session = Depends(get_db)):
     
     post = await get_post_service(post_id,db)
@@ -35,10 +36,7 @@ async def get_post(post_id:int,db : Session = Depends(get_db)):
             "message" : "Post not found"
         }
     
-    return {
-        "image_url" : post.image_url,
-        "caption" : post.caption
-    }
+    return post
     
 @router.get("/")
 def test_db(db: Session = Depends(get_db)):
