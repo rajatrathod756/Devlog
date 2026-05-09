@@ -1,8 +1,17 @@
 # Python
-api/venv/
-api/__pycache__/
-api/.env
-api/*.pyc
+venv/
+.env
+__pycache__/
+*.py[cod]
+*.sqlite3
+
+# FastAPI / pytest / cache
+.pytest_cache/
+.mypy_cache/
+.coverage
+
+# VS Code
+.vscode/
 
 # Node
 web/node_modules/
