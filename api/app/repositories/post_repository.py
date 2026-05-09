@@ -16,3 +16,10 @@ def create_post_repo(
     db.refresh(post)
 
     return post
+
+def get_post_repo(post_id:int, db:Session):
+    
+    post = db.query(Post).filter(Post.id == post_id).first()
+    
+    
+    return post
