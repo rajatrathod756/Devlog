@@ -4,15 +4,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.dependencies.database import get_db
 from app.services.feed_service import get_feed_service
 from app.schemas.post import PostResponse
+from app.api.dependencies.auth import get_current_user
 
 router = APIRouter()
 
 
-@router.get("/", response_model=list[PostResponse])
-async def get_feed(
-    db: AsyncSession = Depends(get_db)
+@router.get("")
+async def get_feed(cursor: int | None = None,
+    limit: int = 10,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_user)
 ):
 
-    posts = await get_feed_service(db=db)
-
-    return posts
+    return await get_feed_service(cursor=cursor, limit=limit,db=db)
