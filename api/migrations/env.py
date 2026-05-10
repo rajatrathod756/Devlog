@@ -11,6 +11,7 @@ from app.db.base import Base
 
 # IMPORT YOUR MODELS HERE
 from app.models.post import Post
+from app.models.user import User
 
 config = context.config
 
