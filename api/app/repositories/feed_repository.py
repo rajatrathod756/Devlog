@@ -1,8 +1,20 @@
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from sqlalchemy.orm import Session
 from app.models.post import Post
 
-def get_feed_repo(db: Session):
-    posts = db.query(Post).order_by(Post.created_at.desc()).all()
-    
+
+async def get_feed_repo(
+    db: AsyncSession
+):
+
+    query = (
+        select(Post)
+        .order_by(Post.created_at.desc())
+    )
+
+    result = await db.execute(query)
+
+    posts = result.scalars().all()
+
     return posts
