@@ -6,6 +6,8 @@ from fastapi import (
     Form
 )
 
+from app.schemas.post import PostResponse
+
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 

@@ -13,7 +13,6 @@ async def create_post_repo(
         image_url=image_url,
         caption=caption
     )
-
     db.add(post)
 
     await db.commit()
