@@ -22,6 +22,11 @@ class User(Base):
         index=True
     )
 
+    name = Column(
+        String,
+        nullable=True
+    )
+
     username = Column(
         String,
         unique=True,
@@ -37,6 +42,11 @@ class User(Base):
     password_hash = Column(
         String,
         nullable=False
+    )
+
+    bio = Column(
+        String,
+        nullable=True
     )
 
     profile_image_url = Column(
