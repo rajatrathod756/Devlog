@@ -13,9 +13,9 @@ from sqlalchemy.orm import relationship
 from app.db.base import Base
 
 
-class Post(Base):
+class Comment(Base):
 
-    __tablename__ = "posts"
+    __tablename__ = "comments"
 
     id = Column(
         Integer,
@@ -23,19 +23,20 @@ class Post(Base):
         index=True
     )
 
-    image_url = Column(
+    content = Column(
         String,
         nullable=False
-    )
-
-    caption = Column(
-        String,
-        nullable=True
     )
 
     user_id = Column(
         Integer,
         ForeignKey("users.id"),
+        nullable=False
+    )
+
+    post_id = Column(
+        Integer,
+        ForeignKey("posts.id"),
         nullable=False
     )
 
@@ -46,11 +47,10 @@ class Post(Base):
 
     user = relationship(
         "User",
-        back_populates="posts"
+        back_populates="comments"
     )
 
-    comments = relationship(
-        "Comment",
-        back_populates="post",
-        cascade="all, delete"
+    post = relationship(
+        "Post",
+        back_populates="comments"
     )

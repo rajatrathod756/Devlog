@@ -2,6 +2,16 @@ from pydantic import BaseModel, EmailStr
 from datetime import datetime
 
 
+class UserPreview(BaseModel):
+
+    id: int
+    username: str
+    profile_image_url: str | None
+
+    class Config:
+        from_attributes = True
+
+
 class UserCreate(BaseModel):
 
     username: str

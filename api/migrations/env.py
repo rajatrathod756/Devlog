@@ -10,8 +10,11 @@ from app.core.config import settings
 from app.db.base import Base
 
 # IMPORT YOUR MODELS HERE
-from app.models.post import Post
-from app.models.user import User
+# from app.models.post import Post
+# from app.models.user import User
+# from app.models.comment import Comment
+# from app.models.follow import Follow
+import app.models
 
 config = context.config
 
