@@ -27,7 +27,7 @@ export default function NavItem({
 
         ${disabled
           ? 'cursor-not-allowed opacity-50'
-          : 'cursor-pointer hover:bg-gray-100'
+          : 'cursor-pointer hover:bg-primary-2'
         }
       `}
       disabled={disabled}
