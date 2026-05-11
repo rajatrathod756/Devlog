@@ -21,12 +21,16 @@ router = APIRouter()
 
 @router.get("/me/posts")
 async def get_my_posts(
+    cursor: int | None = None,
+    limit: int = 9,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
 
     return await get_current_user_posts_service(
         user_id=current_user.id,
+        cursor=cursor,
+        limit=limit,
         db=db
     )
 

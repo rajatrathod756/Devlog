@@ -21,10 +21,14 @@ async def get_user_profile_service(
 
 async def get_current_user_posts_service(
     user_id: int,
+    cursor: int | None,
+    limit: int,
     db: AsyncSession
 ):
 
     return await get_current_user_posts_repo(
         user_id=user_id,
+        cursor=cursor,
+        limit=limit,
         db=db
     )
