@@ -1,8 +1,12 @@
-from sqlalchemy import select
+from turtle import update
+from fastapi import HTTPException
+from sqlalchemy import select,func
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.post import Post
+from app.models.like import Like
+
 
 
 async def create_post_repo(
@@ -44,3 +48,82 @@ async def get_post_repo(
     result = await db.execute(query)
 
     return result.scalar_one_or_none()
+
+async def like_post_repo(
+    post_id: int,
+    user_id: int,
+    db: AsyncSession
+):
+
+    existing_like = await db.scalar(
+        select(Like).where(
+            Like.post_id == post_id,
+            Like.user_id == user_id
+        )
+    )
+
+    if existing_like:
+        raise HTTPException(
+            status_code=400,
+            detail="Post already liked"
+        )
+
+    like = Like(
+        post_id=post_id,
+        user_id=user_id
+    )
+
+    db.add(like)
+
+    await db.flush()
+
+    likes_count = await db.scalar(
+        select(func.count())
+        .select_from(Like)
+        .where(Like.post_id == post_id)
+    )
+
+    await db.commit()
+
+    return {
+        "post_id": post_id,
+        "user_id": user_id,
+        "likes_count": likes_count
+    }
+    
+async def unlike_post_repo(
+    post_id: int,
+    user_id: int,
+    db: AsyncSession
+):
+
+    existing_like = await db.scalar(
+        select(Like).where(
+            Like.post_id == post_id,
+            Like.user_id == user_id
+        )
+    )
+
+    if not existing_like:
+        raise HTTPException(
+            status_code=400,
+            detail="Post not liked"
+        )
+
+    await db.delete(existing_like)
+
+    await db.flush()
+
+    likes_count = await db.scalar(
+        select(func.count())
+        .select_from(Like)
+        .where(Like.post_id == post_id)
+    )
+
+    await db.commit()
+
+    return {
+        "post_id": post_id,
+        "user_id": user_id,
+        "likes_count": likes_count
+    }

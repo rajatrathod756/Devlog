@@ -1,3 +1,4 @@
+import { useAuthStore } from '@/lib/stores/authStore'
 import { authApi } from '@/lib/api/auth'
 
 import type {
@@ -24,7 +25,10 @@ export const authService = {
       payload.password
     )
 
-    return authApi.login(formData)
+    const data = await authApi.login(formData)
+    console.log("data",data)
+     useAuthStore.getState().setAuth(data.token, data.access_token)
+    return data
   },
 
   signup: async (
@@ -32,5 +36,11 @@ export const authService = {
   ) => {
 
     return authApi.signup(payload)
+  },
+
+  logout: async () => {
+    await authApi.logout()
+    useAuthStore.getState().clearAuth()
+    window.location.href = '/login'
   },
 }

@@ -24,4 +24,7 @@ export const authApi = {
       '/auth/signup',
       payload
     ),
+
+  logout: () =>
+    http.post('/auth/logout', {})
 }

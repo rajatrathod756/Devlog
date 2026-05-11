@@ -23,10 +23,12 @@ export default function ProfileCard() {
 
   const [loading, setLoading] = useState(true);
 
+  
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const data = await userService.getProfile(1);
+        const data = await userService.getProfile(localStorage.getItem("user_id"));
 
         setProfile(data);
       } catch (error) {

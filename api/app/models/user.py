@@ -70,3 +70,9 @@ class User(Base):
         back_populates="user",
         cascade="all, delete"
     )
+
+    liked_posts = relationship(
+        "Like",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )

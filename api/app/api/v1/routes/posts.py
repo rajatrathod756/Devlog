@@ -20,7 +20,9 @@ from app.schemas.post import PostResponse
 
 from app.services.post_service import (
     create_post_service,
-    get_post_service
+    get_post_service,
+    like_post_service,
+    unlike_post_service
 )
 
 router = APIRouter()
@@ -90,6 +92,43 @@ async def get_post(
         "created_at": post.created_at,
     }
 
+@router.post("/{post_id}/like")
+async def like_post(
+    post_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    post = await like_post_service(
+        post_id,
+        current_user.id,
+        db
+    )
+
+    print(post)
+
+    return {
+        "message": "Post liked",
+    }
+    
+@router.delete("/{post_id}/unlike")
+async def unlike_post(
+    post_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    post = await unlike_post_service(
+        post_id,
+        current_user.id,
+        db
+    )
+
+    print(post)
+
+    return {
+        "message": "Post unliked",
+    }
 
 
 # @router.delete("/dev/clear-posts")

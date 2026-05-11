@@ -1,3 +1,8 @@
+import { useAuthStore } from './stores/authStore'
+import { ApiError, UnauthorizedError } from './errors'
+// in request function
+
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/'
 
 const URL_V1 = `${BASE_URL}api/v1`
@@ -7,9 +12,10 @@ async function request<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const isFormData = options.body instanceof FormData
-  const token = typeof window !== 'undefined'
-    ? localStorage.getItem('token')
-    : null
+  // const token = typeof window !== 'undefined'
+  //   ? localStorage.getItem('token')
+  //   : null
+  const token = useAuthStore.getState().token
 
   const res = await fetch(`${URL_V1}${endpoint}`, {
     ...options,
@@ -21,9 +27,23 @@ async function request<T>(
   })
 
   if (!res.ok) {
-    const error = await res.json()
-    throw new Error(error.error || 'Something went wrong')
+    const body = await res.json().catch(() => ({}))
+
+    if (res.status === 401) {
+      // clear token and redirect to login
+      useAuthStore.getState().clearAuth()
+      window.location.href = '/login'
+      throw new UnauthorizedError()
+    }
+
+    throw new ApiError(
+      body.error || 'Something went wrong',
+      res.status,
+      body.code
+    )
   }
+
+  if (res.status === 204) return null as T
 
   return res.json()
 }

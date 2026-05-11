@@ -4,7 +4,9 @@ from app.utils.file_upload import upload_image
 
 from app.repositories.post_repository import (
     create_post_repo,
-    get_post_repo
+    get_post_repo,
+    like_post_repo,
+    unlike_post_repo
 )
 
 
@@ -36,3 +38,25 @@ async def get_post_service(
         post_id,
         db
     )
+async def like_post_service(
+    post_id: int,
+    user_id: int,
+    db: AsyncSession
+):
+    return await like_post_repo(
+        post_id,
+        user_id,
+        db)
+    
+async def unlike_post_service(
+    post_id: int,
+    user_id: int,
+    db: AsyncSession
+):
+    return await unlike_post_repo(
+        post_id,
+        user_id,
+        db)
+
+
+

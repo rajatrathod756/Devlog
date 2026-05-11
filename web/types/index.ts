@@ -30,3 +30,11 @@ export type UserResponse = {
   profile_image_url?: string
   created_at: string
 }
+
+export type User = {
+  id: number
+  username: string
+  email: string
+  profile_image_url?: string
+  created_at: string
+}

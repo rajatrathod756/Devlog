@@ -7,7 +7,7 @@ import type { Post as PostType } from '@/types'
 
 export default function Post({ post }: { post: PostType }) {
     return(
-       <div className="w-full border border-[var(--color-secondary-3)] p-4 text-secondary-1 mt-5 rounded-lg">
+       <div className="w-full border border-solid border-[var(--color-secondary-3)] p-4 text-secondary-1 mt-5 rounded-lg">
   
   {/* Constrain image size */}
   <div className="w-full max-h-[500px] overflow-hidden rounded-md flex items-center justify-center bg-primary-1">

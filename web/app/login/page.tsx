@@ -37,8 +37,8 @@ export default function LoginPage() {
       const response = await authService.login(formData);
 
       // assuming backend returns { access_token: "token_here" }
-      localStorage.setItem("token", response.access_token);
-
+      // localStorage.setItem("token", response.access_token);
+       localStorage.setItem("user_id", response.user_id);
       // navigate to home page
       router.push("/");
     } catch (error) {
@@ -48,13 +48,13 @@ export default function LoginPage() {
     }
   };
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
 
-    if (token) {
-      router.push("/");
-    }
-  }, []);
+  //   if (token) {
+  //     router.push("/");
+  //   }
+  // }, []);
 
   return (
     <div className="flex min-h-screen items-center justify-center">
