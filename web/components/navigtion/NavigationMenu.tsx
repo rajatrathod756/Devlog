@@ -1,4 +1,6 @@
-import NavItem from "./NavItem"
+import NavItem from "./NavItem";
+
+import { logout } from "@/lib/utils/logout";
 
 export default function NavigationMenu() {
   return (
@@ -10,6 +12,8 @@ export default function NavigationMenu() {
       <NavItem label="Notifications" disabled />
 
       <NavItem label="Bookmarks" disabled />
+
+      <NavItem label="Logout" onClick={logout} />
     </nav>
-  )
+  );
 }

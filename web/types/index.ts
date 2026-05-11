@@ -16,3 +16,17 @@ export interface LoginResponse {
   access_token: string
   token_type: string
 }
+
+export type SignupPayload = {
+  username: string
+  email: string
+  password: string
+}
+
+export type UserResponse = {
+  id: number
+  username: string
+  email: string
+  profile_image_url?: string
+  created_at: string
+}

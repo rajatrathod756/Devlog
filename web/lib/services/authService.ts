@@ -1,18 +1,36 @@
-// lib/services/authService.ts
-
 import { authApi } from '@/lib/api/auth'
-import { LoginPayload } from '@/types'
+
+import type {
+  LoginPayload,
+  SignupPayload
+} from '@/types'
+
 
 export const authService = {
-  login: async (payload: LoginPayload) => {
+
+  login: async (
+    payload: LoginPayload
+  ) => {
+
     const formData = new FormData()
 
-    console.log('Payload in authService.login:', payload)
-    formData.append('username', payload.username)
-    formData.append('password', payload.password)
+    formData.append(
+      'username',
+      payload.username
+    )
 
-    const data = await authApi.login(formData)
+    formData.append(
+      'password',
+      payload.password
+    )
 
-    return data
+    return authApi.login(formData)
+  },
+
+  signup: async (
+    payload: SignupPayload
+  ) => {
+
+    return authApi.signup(payload)
   },
 }

@@ -1,8 +1,27 @@
 import { http } from '@/lib/http'
-import type {LoginResponse } from '@/types'
+
+import type {
+  LoginResponse,
+  SignupPayload,
+  UserResponse
+} from '@/types'
 
 
 export const authApi = {
-  login: (payload: FormData) =>
-    http.post<LoginResponse>('/auth/login', payload),
+
+  login: (
+    payload: FormData
+  ) =>
+    http.post<LoginResponse>(
+      '/auth/login',
+      payload
+    ),
+
+  signup: (
+    payload: SignupPayload
+  ) =>
+    http.post<UserResponse>(
+      '/auth/signup',
+      payload
+    ),
 }

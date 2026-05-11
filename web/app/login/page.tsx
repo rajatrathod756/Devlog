@@ -1,51 +1,60 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { authService } from '@/lib/services/authService'
-import { Login } from '@mui/icons-material'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { authService } from "@/lib/services/authService";
+import { Login } from "@mui/icons-material";
+import { useEffect } from "react";
 
 type LoginPayload = {
-  username: string
-  password: string
-}
+  username: string;
+  password: string;
+};
 
 export default function LoginPage() {
-  const router = useRouter()
+  const router = useRouter();
 
   const [formData, setFormData] = useState<LoginPayload>({
-    username: '',
-    password: '',
-  })
+    username: "",
+    password: "",
+  });
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
-    })
-  }
+    });
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     try {
-      setLoading(true)
+      setLoading(true);
 
-      const response = await authService.login(formData)
+      const response = await authService.login(formData);
 
       // assuming backend returns { access_token: "token_here" }
-      localStorage.setItem('token', response.access_token)
+      localStorage.setItem("token", response.access_token);
 
       // navigate to home page
-      router.push('/')
+      router.push("/");
     } catch (error) {
-      console.error('Login failed', error)
+      console.error("Login failed", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      router.push("/");
+    }
+  }, []);
 
   return (
     <div className="flex min-h-screen items-center justify-center">
@@ -58,7 +67,7 @@ export default function LoginPage() {
         <input
           type="text"
           name="username"
-          placeholder="Username"
+          placeholder="Email"
           value={formData.username}
           onChange={handleChange}
           className="border p-2 rounded text-secondary-1"
@@ -76,11 +85,27 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="bg-black text-white p-2 rounded"
+          className={`
+            bg-black
+            text-white
+            p-2
+            rounded
+            ${loading ? "cursor-not-allowed opacity-50" : "cursor-pointer"}
+          `}
         >
-          {loading ? 'Logging in...' : 'Login'}
+          {loading ? "Logging in..." : "Login"}
         </button>
+
+        <p className="text-sm text-center text-secondary-1">
+          Don't have an account?
+          <span
+            onClick={() => router.push("/signup")}
+            className="ml-1 cursor-pointer underline"
+          >
+            Signup
+          </span>
+        </p>
       </form>
     </div>
-  )
+  );
 }
