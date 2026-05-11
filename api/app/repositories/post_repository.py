@@ -1,4 +1,5 @@
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.post import Post
@@ -7,15 +8,20 @@ from app.models.post import Post
 async def create_post_repo(
     image_url: str,
     caption: str,
+    user_id: int,
     db: AsyncSession
 ):
+
     post = Post(
         image_url=image_url,
-        caption=caption
+        caption=caption,
+        user_id=user_id
     )
+
     db.add(post)
 
     await db.commit()
+
     await db.refresh(post)
 
     return post
@@ -25,7 +31,15 @@ async def get_post_repo(
     post_id: int,
     db: AsyncSession
 ):
-    query = select(Post).where(Post.id == post_id)
+
+    query = (
+        select(Post)
+        .options(
+            selectinload(Post.user),
+            selectinload(Post.comments)
+        )
+        .where(Post.id == post_id)
+    )
 
     result = await db.execute(query)
 

@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.schemas.user import UserCreate
 
-from app.repositories.user_repository import (
+from app.repositories.auth_repository import (
     get_user_by_email,
     get_user_by_username,
     create_user

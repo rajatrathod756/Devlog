@@ -1,50 +1,28 @@
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.user import User
+from app.models.post import Post
 
 
-async def get_user_by_email(
-    email: str,
+async def get_current_user_posts_repo(
+    user_id: int,
     db: AsyncSession
 ):
 
-    query = select(User).where(User.email == email)
-
-    result = await db.execute(query)
-
-    return result.scalar_one_or_none()
-
-
-async def get_user_by_username(
-    username: str,
-    db: AsyncSession
-):
-
-    query = select(User).where(User.username == username)
-
-    result = await db.execute(query)
-
-    return result.scalar_one_or_none()
-
-
-async def create_user(
-    username: str,
-    email: str,
-    password_hash: str,
-    db: AsyncSession
-):
-
-    user = User(
-        username=username,
-        email=email,
-        password_hash=password_hash
+    query = (
+        select(Post)
+        .options(
+            selectinload(Post.user),
+            selectinload(Post.comments)
+        )
+        .where(Post.user_id == user_id)
+        .order_by(Post.id.desc())
     )
 
-    db.add(user)
+    result = await db.execute(query)
 
-    await db.commit()
+    posts = result.scalars().all()
 
-    await db.refresh(user)
-
-    return user
+    return posts

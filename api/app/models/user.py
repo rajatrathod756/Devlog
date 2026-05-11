@@ -7,6 +7,8 @@ from sqlalchemy import (
 
 from sqlalchemy.sql import func
 
+from sqlalchemy.orm import relationship
+
 from app.db.base import Base
 
 
@@ -45,4 +47,16 @@ class User(Base):
     created_at = Column(
         DateTime(timezone=True),
         server_default=func.now()
+    )
+
+    posts = relationship(
+        "Post",
+        back_populates="user",
+        cascade="all, delete"
+    )
+
+    comments = relationship(
+        "Comment",
+        back_populates="user",
+        cascade="all, delete"
     )
