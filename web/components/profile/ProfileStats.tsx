@@ -1,19 +1,48 @@
 type ProfileStatsProps = {
-  posts?: number
-  followers?: number
-  following?: number
+  posts: number
+  followers: number
+  following: number
 }
 
 export default function ProfileStats({
-  posts = 120,
-  followers = 500,
-  following = 180,
+  posts,
+  followers,
+  following,
 }: ProfileStatsProps) {
+
   return (
-    <div className="flex gap-4">
-      <p>{posts} Posts</p>
-      <p>{followers} Followers</p>
-      <p>{following} Following</p>
+    <div className="flex gap-6 mt-4">
+
+      <div className="flex flex-col items-center">
+        <p className="font-bold text-lg">
+          {posts}
+        </p>
+
+        <p className="text-sm text-gray-400">
+          Posts
+        </p>
+      </div>
+
+      <div className="flex flex-col items-center">
+        <p className="font-bold text-lg">
+          {followers}
+        </p>
+
+        <p className="text-sm text-gray-400">
+          Followers
+        </p>
+      </div>
+
+      <div className="flex flex-col items-center">
+        <p className="font-bold text-lg">
+          {following}
+        </p>
+
+        <p className="text-sm text-gray-400">
+          Following
+        </p>
+      </div>
+
     </div>
   )
 }

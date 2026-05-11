@@ -18,6 +18,8 @@ from app.models.follow import Follow
 
 async def get_current_user_posts_repo(
     user_id: int,
+    cursor: int | None,
+    limit: int,
     db: AsyncSession
 ):
 
@@ -31,11 +33,33 @@ async def get_current_user_posts_repo(
         .order_by(Post.id.desc())
     )
 
-    result = await db.execute(query)
+    if cursor:
+        query = query.where(
+            Post.id < cursor
+        )
+
+    result = await db.execute(
+        query.limit(limit + 1)
+    )
 
     posts = result.scalars().all()
 
-    return posts
+    has_more = len(posts) > limit
+
+    if has_more:
+        posts = posts[:limit]
+
+    next_cursor = (
+        posts[-1].id
+        if has_more and posts
+        else None
+    )
+
+    return {
+        "posts": posts,
+        "next_cursor": next_cursor,
+        "has_more": has_more
+    }
 
 
 async def get_user_profile_repo(
