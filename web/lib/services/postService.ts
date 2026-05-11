@@ -26,7 +26,7 @@ export const postService = {
   },
 
   toggleLike: async (postId: number, isLiked: boolean) => {
-    // one function handles both like and unlike
+    // one function handles both like and unlikex
     return isLiked
       ? postsApi.unlike(postId)
       : postsApi.like(postId)

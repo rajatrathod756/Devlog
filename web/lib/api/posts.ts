@@ -1,8 +1,9 @@
 import { http } from '@/lib/http'
+import type { PostFeedItem} from '@/types/feed'
 import type { Post } from '@/types'
 
 type FeedResponse = {
-  posts: Post[]
+  posts: PostFeedItem[]
   next_cursor: number | null
   has_more: boolean
 }

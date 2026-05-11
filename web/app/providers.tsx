@@ -1,6 +1,6 @@
 'use client'
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { MutationCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from '@/lib/theme/ThemeContext'
 import { useState } from 'react'
 import { ApiError } from '@/lib/errors'
@@ -26,6 +26,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             retry: false,                
           },
         },
+        mutationCache: new MutationCache({
+          onSettled: () => {
+          queryClient.invalidateQueries()
+          },
+        }),
       })
   )
 

@@ -4,8 +4,13 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import InsertCommentIcon from '@mui/icons-material/InsertComment';
 import type { Post as PostType } from '@/types'
+import { usePostMutations } from '@/lib/hooks/usePost'
+
+
 
 export default function Post({ post }: { post: PostType }) {
+    const { toggleLikeMutation } = usePostMutations()
+
     return(
        <div className="w-full border border-solid border-[var(--color-secondary-3)] p-4 text-secondary-1 mt-5 rounded-lg">
   
@@ -26,8 +31,10 @@ export default function Post({ post }: { post: PostType }) {
     {new Date(post.created_at).toLocaleDateString()}
   </p>
   <div>
-    <button className="px-4 py-2">
-      <FavoriteBorderIcon />
+    <button className="px-4 py-2" onClick={() => {
+      toggleLikeMutation.mutate({ postId: post.id, isLiked: post.is_liked })
+      post.is_liked = !post.is_liked}}>
+      {post.is_liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
     </button>
     <button className="px-4 py-2">
       <InsertCommentIcon />

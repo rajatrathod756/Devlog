@@ -111,7 +111,7 @@ async def like_post(
         "message": "Post liked",
     }
     
-@router.delete("/{post_id}/unlike")
+@router.delete("/{post_id}/like")
 async def unlike_post(
     post_id: int,
     db: AsyncSession = Depends(get_db),

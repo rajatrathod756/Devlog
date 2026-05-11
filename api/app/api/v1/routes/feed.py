@@ -16,4 +16,4 @@ async def get_feed(cursor: int | None = None,
     current_user = Depends(get_current_user)
 ):
 
-    return await get_feed_service(cursor=cursor, limit=limit,db=db)
+    return await get_feed_service(cursor=cursor, limit=limit, current_user_id=current_user.id, db=db)
