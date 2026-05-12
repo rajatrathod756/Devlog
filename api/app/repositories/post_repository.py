@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.post import Post
 from app.models.like import Like
+from app.models.comment import Comment
 
 
 
@@ -32,16 +33,24 @@ async def create_post_repo(
 
 
 async def get_post_repo(
+
     post_id: int,
+
     db: AsyncSession
 ):
 
     query = (
+
         select(Post)
+
         .options(
+
             selectinload(Post.user),
+
             selectinload(Post.comments)
+            .selectinload(Comment.user)
         )
+
         .where(Post.id == post_id)
     )
 
@@ -127,3 +136,31 @@ async def unlike_post_repo(
         "user_id": user_id,
         "likes_count": likes_count
     }
+
+async def create_comment_repo(
+
+    post_id: int,
+
+    user_id: int,
+
+    content: str,
+
+    db: AsyncSession
+):
+
+    comment = Comment(
+
+        post_id=post_id,
+
+        user_id=user_id,
+
+        content=content
+    )
+
+    db.add(comment)
+
+    await db.commit()
+
+    await db.refresh(comment)
+
+    return comment

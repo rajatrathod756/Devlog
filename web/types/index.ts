@@ -1,10 +1,28 @@
 // types/index.ts
-export interface Post {
+export type Post = {
+
   id: number
+
   image_url: string
-  caption: string | null
+
+  caption: string
+
   created_at: string
-  
+
+  is_liked: boolean
+
+  likes_count: number
+
+  comments_count: number
+
+  user: {
+
+    id: number
+
+    username: string
+
+    profile_image_url: string | null
+  }
 }
 
 export type LoginPayload = {
