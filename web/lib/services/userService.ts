@@ -45,6 +45,11 @@ export const userService = {
       )
 
     return updatedUser
+  },
+
+  searchUsers: async (query : string) => {
+    const data = await userApi.searchUsers(query)
+    return data
   }
 }
 

@@ -1,8 +1,12 @@
+
+
 from sqlalchemy import (
     Column,
     Integer,
     String,
-    DateTime
+    DateTime,
+    Index,
+    func
 )
 
 from sqlalchemy.sql import func
@@ -76,3 +80,16 @@ class User(Base):
         back_populates="user",
         cascade="all, delete-orphan"
     )
+    
+    __table_args__ = (
+        Index(
+            "idx_users_username_lower",
+            func.lower(username)
+        ),
+        Index(
+            "idx_users_name_lower",
+            func.lower(name)
+        ),
+    )
+
+    

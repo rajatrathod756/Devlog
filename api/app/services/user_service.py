@@ -5,7 +5,8 @@ from fastapi import UploadFile
 from app.repositories.user_repository import (
     get_current_user_posts_repo,
     get_user_profile_repo,
-    update_user_repo
+    update_user_repo,
+    search_users_repo
 )
 
 from app.utils.file_upload import upload_image
@@ -83,3 +84,12 @@ async def update_profile_service(
     )
 
     return updated_user
+
+async def search_users_service(
+    query: str,
+    db: AsyncSession
+):
+    return await search_users_repo(
+        query=query,
+        db=db
+    )
