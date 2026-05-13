@@ -38,7 +38,7 @@ export default function LoginPage() {
 
       // assuming backend returns { access_token: "token_here" }
       // localStorage.setItem("token", response.access_token);
-       localStorage.setItem("user_id", response.user_id);
+      localStorage.setItem("user_id", response.user_id);
       // navigate to home page
       router.push("/");
     } catch (error) {
@@ -86,8 +86,8 @@ export default function LoginPage() {
           type="submit"
           disabled={loading}
           className={`
-            bg-black
-            text-white
+           bg-secondary-1
+          text-primary-2
             p-2
             rounded
             ${loading ? "cursor-not-allowed opacity-50" : "cursor-pointer"}

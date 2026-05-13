@@ -18,11 +18,20 @@ from app.models.user import User
 
 from app.schemas.post import PostResponse
 
+from app.schemas.comment import (
+    CommentCreate,
+    CommentPreview
+)
+
+from app.services.comment_service import (
+    create_comment_service
+)
+
 from app.services.post_service import (
     create_post_service,
     get_post_service,
     like_post_service,
-    unlike_post_service
+    unlike_post_service,
 )
 
 router = APIRouter()
@@ -105,8 +114,6 @@ async def like_post(
         db
     )
 
-    print(post)
-
     return {
         "message": "Post liked",
     }
@@ -124,12 +131,57 @@ async def unlike_post(
         db
     )
 
-    print(post)
-
     return {
         "message": "Post unliked",
     }
 
+
+@router.post(
+    "/{post_id}/comments",
+    response_model=CommentPreview,
+    status_code=status.HTTP_201_CREATED
+)
+async def create_comment(
+
+    post_id: int,
+
+    payload: CommentCreate,
+
+    db: AsyncSession = Depends(get_db),
+
+    current_user: User = Depends(get_current_user)
+):
+
+    comment = await create_comment_service(
+
+        post_id=post_id,
+
+        user_id=current_user.id,
+
+        content=payload.content,
+
+        db=db
+    )
+
+    return {
+
+        "id": comment.id,
+
+        "content": comment.content,
+
+        "created_at": comment.created_at,
+
+        "user": {
+
+            "id": current_user.id,
+
+            "username":
+                current_user.username,
+
+            "profile_image_url":
+                current_user.profile_image_url,
+        }
+    }
 
 # @router.delete("/dev/clear-posts")
 # async def clear_posts(
