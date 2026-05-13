@@ -29,3 +29,15 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+
+class UserUpdate(BaseModel):
+
+    username: str | None = None
+
+    name: str | None = None
+
+    bio: str | None = None
+
+    profile_image_url: str | None = None

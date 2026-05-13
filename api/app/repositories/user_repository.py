@@ -194,3 +194,38 @@ async def get_user_profile_repo(
         "is_following": is_following,
         "follows_you": follows_you
     }
+
+async def update_user_repo(
+
+    user: User,
+
+    db: AsyncSession,
+
+    username: str | None = None,
+
+    name: str | None = None,
+
+    bio: str | None = None,
+
+    profile_image_url: str | None = None,
+):
+
+    if username is not None:
+        user.username = username
+
+    if name is not None:
+        user.name = name
+
+    if bio is not None:
+        user.bio = bio
+
+    if profile_image_url is not None:
+        user.profile_image_url = (
+            profile_image_url
+        )
+
+    await db.commit()
+
+    await db.refresh(user)
+
+    return user

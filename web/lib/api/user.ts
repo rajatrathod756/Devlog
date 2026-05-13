@@ -10,4 +10,10 @@ export const userApi = {
 
     return http.get<UserPostsResponse>(`/users/me/posts${query}`);
   },
+  updateMe: (payload: FormData) =>
+    http.patch(
+      "/users/me",
+
+      payload,
+    ),
 };

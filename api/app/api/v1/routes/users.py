@@ -2,6 +2,12 @@ from fastapi import APIRouter, Depends
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from fastapi import (
+    UploadFile,
+    File,
+    Form
+)
+
 from app.api.dependencies.database import get_db
 from app.api.dependencies.auth import get_current_user
 
@@ -13,7 +19,8 @@ from app.schemas.profile import (
 
 from app.services.user_service import (
     get_current_user_posts_service,
-    get_user_profile_service
+    get_user_profile_service,
+    update_profile_service
 )
 
 router = APIRouter()
@@ -58,3 +65,58 @@ async def get_user_profile(
         )
 
     return profile
+
+@router.patch("/me")
+async def update_profile(
+
+    username: str | None = Form(None),
+
+    name: str | None = Form(None),
+
+    bio: str | None = Form(None),
+
+    profile_image:
+        UploadFile | None = File(None),
+
+    db: AsyncSession = Depends(get_db),
+
+    current_user: User =
+        Depends(get_current_user)
+):
+
+    updated_user = (
+        await update_profile_service(
+
+            user=current_user,
+
+            db=db,
+
+            username=username,
+
+            name=name,
+
+            bio=bio,
+
+            profile_image=profile_image,
+        )
+    )
+
+    return {
+
+        "id": updated_user.id,
+
+        "username":
+            updated_user.username,
+
+        "name":
+            updated_user.name,
+
+        "bio":
+            updated_user.bio,
+
+        "email":
+            updated_user.email,
+
+        "profile_image_url":
+            updated_user.profile_image_url,
+    }

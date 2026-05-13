@@ -2,15 +2,17 @@
 
 import { useEffect, useState } from "react";
 
-import Link from "next/link";
-
 import { usePathname, useRouter } from "next/navigation";
 
 import { ArrowLeft } from "lucide-react";
 
 import ProfileStats from "./ProfileStats";
 
+import EditProfileModal from "./EditProfileModal";
+
 import { userService } from "@/lib/services/userService";
+
+import { useAuthStore } from "@/lib/stores/authStore";
 
 import type { ProfileResponse } from "@/types/profile";
 
@@ -19,16 +21,20 @@ export default function ProfileCard() {
 
   const pathname = usePathname();
 
+  const currentUser = useAuthStore((state) => state.user);
+
   const [profile, setProfile] = useState<ProfileResponse | null>(null);
 
   const [loading, setLoading] = useState(true);
 
-  
+  const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
+    if (!currentUser?.id) return;
+
     const fetchProfile = async () => {
       try {
-        const data = await userService.getProfile(localStorage.getItem("user_id"));
+        const data = await userService.getProfile(currentUser.id);
 
         setProfile(data);
       } catch (error) {
@@ -39,7 +45,7 @@ export default function ProfileCard() {
     };
 
     fetchProfile();
-  }, []);
+  }, [currentUser]);
 
   if (loading) {
     return <div className="p-6">Loading profile...</div>;
@@ -49,8 +55,25 @@ export default function ProfileCard() {
     return <div className="p-6">Failed to load profile</div>;
   }
 
+  const handleCardClick = () => {
+    if (pathname !== "/profile") {
+      router.push("/profile");
+    }
+  };
+
+  const handleCardKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (pathname !== "/profile" && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      handleCardClick();
+    }
+  };
+
   const cardContent = (
     <div
+      onClick={handleCardClick}
+      onKeyDown={handleCardKeyDown}
+      role={pathname !== "/profile" ? "button" : undefined}
+      tabIndex={pathname !== "/profile" ? 0 : undefined}
       className="
         relative
 
@@ -68,7 +91,7 @@ export default function ProfileCard() {
         items-center
 
         gap-4
-      "
+        "
     >
       {/* BACK BUTTON */}
 
@@ -118,7 +141,12 @@ export default function ProfileCard() {
       {/* NAME + USERNAME */}
 
       <div className="text-center">
-        <h2 className="text-2xl font-bold">
+        <h2
+          className="
+            text-2xl
+            font-bold
+          "
+        >
           {profile.name || profile.username}
         </h2>
 
@@ -137,20 +165,20 @@ export default function ProfileCard() {
 
       <p
         className="
-    text-center
+          text-center
 
-    text-base
+          text-base
 
-    text-secondary-1
+          text-secondary-1
 
-    opacity-80
+          opacity-80
 
-    leading-relaxed
+          leading-relaxed
 
-    max-w-md
+          max-w-md
 
-    px-4
-  "
+          px-4
+        "
       >
         {profile.bio || "No bio available"}
       </p>
@@ -163,43 +191,81 @@ export default function ProfileCard() {
         following={profile.following_count}
       />
 
-      {/* FOLLOW BUTTON */}
+      {/* ACTION BUTTON */}
 
-      <button
-        className="
-          mt-4
+      {currentUser?.id === profile.id ? (
+        <button
+          onClick={(e) => {
+            e.preventDefault();
 
-          bg-secondary-1
-          text-primary-2
+            e.stopPropagation();
 
-          px-6
-          py-2
+            setShowEditModal(true);
+          }}
+          className="
+            mt-4
 
-          rounded-full
+            bg-secondary-1
+            text-primary-2
 
-          font-semibold
+            px-6
+            py-2
 
-          hover:opacity-80
+            rounded-full
 
-          transition
+            font-semibold
 
-          cursor-pointer
-        "
-      >
-        {profile.is_following
-          ? "Following"
-          : profile.follows_you
-            ? "Follow Back"
-            : "Follow"}
-      </button>
+            hover:opacity-80
+
+            transition
+
+            cursor-pointer
+          "
+        >
+          Edit Profile
+        </button>
+      ) : (
+        <button
+          className="
+            mt-4
+
+            bg-secondary-1
+            text-primary-2
+
+            px-6
+            py-2
+
+            rounded-full
+
+            font-semibold
+
+            hover:opacity-80
+
+            transition
+
+            cursor-pointer
+          "
+        >
+          {profile.is_following
+            ? "Following"
+            : profile.follows_you
+              ? "Follow Back"
+              : "Follow"}
+        </button>
+      )}
     </div>
   );
 
-  // HOME PAGE → clickable
-  if (pathname !== "/profile") {
-    return <Link href="/profile">{cardContent}</Link>;
-  }
+  const content = (
+    <>
+      {cardContent}
 
-  // PROFILE PAGE → not clickable
-  return cardContent;
+      <EditProfileModal
+        open={showEditModal}
+        onClose={() => setShowEditModal(false)}
+      />
+    </>
+  );
+
+  return content;
 }
