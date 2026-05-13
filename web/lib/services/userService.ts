@@ -1,5 +1,9 @@
 import { userApi } from "@/lib/api/user"
 
+import {
+  useAuthStore
+} from "@/lib/stores/authStore"
+
 export const userService = {
   getProfile: async (userId: number) => {
 
@@ -16,6 +20,31 @@ export const userService = {
   return await userApi.getMyPosts(
     cursor
   )
-}
+},
+ updateProfile: async (
+
+    payload: FormData
+
+  ) => {
+
+    const updatedUser =
+      await userApi.updateMe(
+        payload
+      )
+
+    const token =
+      useAuthStore
+        .getState()
+        .token
+
+    useAuthStore
+      .getState()
+      .setAuth(
+        updatedUser,
+        token!
+      )
+
+    return updatedUser
+  }
 }
 

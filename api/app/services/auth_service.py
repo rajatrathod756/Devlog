@@ -91,7 +91,24 @@ async def login_service(
     )
 
     return {
+
         "access_token": access_token,
+
         "token_type": "bearer",
-        "user_id": user.id,
+
+        "user": {
+
+            "id": user.id,
+
+            "username": user.username,
+
+            "email": user.email,
+
+            "profile_image_url":
+                user.profile_image_url,
+
+            "name": user.name,
+
+            "bio"  : user.bio
+        }
     }
