@@ -69,11 +69,11 @@ export default function Post({
       className="
         w-full
 
-        border
+        border-2
 
-        border-[var(--color-secondary-3)]
+        border-primary-2
 
-        bg-primary-2
+        bg-primary-1
 
         rounded-2xl
 

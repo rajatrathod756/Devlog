@@ -76,8 +76,9 @@ export default function ProfileCard() {
       tabIndex={pathname !== "/profile" ? 0 : undefined}
       className="
         relative
-
-        bg-primary-2
+        border-2
+        border-primary-2
+        bg-primary-1
         text-secondary-1
 
         p-6

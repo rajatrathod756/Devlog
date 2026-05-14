@@ -16,4 +16,6 @@ export const userApi = {
 
       payload,
     ),
+  searchUsers: (query: string) =>
+    http.get<{ users: ProfileResponse[] }>(`/users/search/${encodeURIComponent(query)}`),
 };

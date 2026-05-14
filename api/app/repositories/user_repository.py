@@ -1,6 +1,7 @@
 from sqlalchemy import (
     select,
-    func
+    func,
+    or_
 )
 
 from sqlalchemy.orm import (
@@ -229,3 +230,28 @@ async def update_user_repo(
     await db.refresh(user)
 
     return user
+
+
+async def search_users_repo(
+    query: str,
+    db: AsyncSession
+):
+    
+    if len(query) < 2:
+        print("Query too short for search", query)
+        return {"users": []}
+        
+    result = await db.execute(
+        select(User)
+        .where(
+            or_(
+                User.username.ilike(f"{query}%"),
+                User.name.ilike(f"{query}%")
+            )
+        )
+        .limit(10)
+    )
+
+    users = result.scalars().all()
+
+    return {"users": users}

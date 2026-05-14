@@ -1,3 +1,4 @@
+from app.schemas.user import UserSearchResponse
 from fastapi import APIRouter, Depends
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -20,7 +21,8 @@ from app.schemas.profile import (
 from app.services.user_service import (
     get_current_user_posts_service,
     get_user_profile_service,
-    update_profile_service
+    update_profile_service,
+    search_users_service
 )
 
 router = APIRouter()
@@ -120,3 +122,23 @@ async def update_profile(
         "profile_image_url":
             updated_user.profile_image_url,
     }
+
+
+@router.get("/search/{query}", response_model=UserSearchResponse)
+async def search_users(
+    query: str,
+    db: AsyncSession = Depends(get_db),
+   
+):
+
+    updatedUser = await search_users_service(
+            query=query,
+            db=db
+        );
+
+    if not updatedUser:
+        raise HTTPException(
+            status_code=404,
+            detail="No users found"
+        )
+    return updatedUser;
