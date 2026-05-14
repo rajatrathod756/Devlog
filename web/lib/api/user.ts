@@ -4,7 +4,7 @@ import type { ProfileResponse } from "@/types/profile";
 import type { UserPostsResponse } from "@/types/post";
 
 export const userApi = {
-  getProfile: (userId: number) => http.get<ProfileResponse>(`/users/${userId}`),
+  getProfile: (username: string) => http.get<ProfileResponse>(`/users/${username}`),
   getMyPosts: (cursor?: number) => {
     const query = cursor ? `?cursor=${cursor}` : "";
 
@@ -13,9 +13,10 @@ export const userApi = {
   updateMe: (payload: FormData) =>
     http.patch(
       "/users/me",
-
       payload,
     ),
   searchUsers: (query: string) =>
     http.get<{ users: ProfileResponse[] }>(`/users/search/${encodeURIComponent(query)}`),
+  followUser: (userId: number) => http.post(`/users/${userId}/follow`),
+  unfollowUser: (userId: number) => http.delete(`/users/${userId}/follow`),
 };

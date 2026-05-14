@@ -64,7 +64,8 @@ async def get_current_user_posts_repo(
 
 
 async def get_user_profile_repo(
-    profile_user_id: int,
+    profile_user_name: str,
+    current_user_name: str,
     current_user_id: int,
     db: AsyncSession
 ):
@@ -75,7 +76,7 @@ async def get_user_profile_repo(
 
     user_query = (
         select(User)
-        .where(User.id == profile_user_id)
+        .where(User.username == profile_user_name)
     )
 
     user_result = await db.execute(
@@ -95,7 +96,7 @@ async def get_user_profile_repo(
         select(func.count())
         .select_from(Follow)
         .where(
-            Follow.following_id == profile_user_id
+            Follow.following_id == user.id
         )
     )
 
@@ -111,7 +112,7 @@ async def get_user_profile_repo(
         select(func.count())
         .select_from(Follow)
         .where(
-            Follow.follower_id == profile_user_id
+            Follow.follower_id == user.id
         )
     )
 
@@ -127,7 +128,7 @@ async def get_user_profile_repo(
         select(func.count())
         .select_from(Post)
         .where(
-            Post.user_id == profile_user_id
+            Post.user_id == user.id
         )
     )
 
@@ -143,7 +144,7 @@ async def get_user_profile_repo(
         select(Follow)
         .where(
             Follow.follower_id == current_user_id,
-            Follow.following_id == profile_user_id
+            Follow.following_id == user.id
         )
     )
 
@@ -163,7 +164,7 @@ async def get_user_profile_repo(
     follows_you_query = (
         select(Follow)
         .where(
-            Follow.follower_id == profile_user_id,
+            Follow.follower_id == user.id,
             Follow.following_id == current_user_id
         )
     )
@@ -255,3 +256,78 @@ async def search_users_repo(
     users = result.scalars().all()
 
     return {"users": users}
+
+
+async def follow_user_profile_repo(
+
+    current_user_id: int,
+
+    db: AsyncSession,
+
+    target_user_id: int
+):
+
+    if current_user_id == target_user_id:
+        return None
+
+    existing_follow_query = (
+        select(Follow)
+        .where(
+            Follow.follower_id == current_user_id,
+            Follow.following_id == target_user_id
+        )
+    )
+
+    existing_follow_result = await db.execute(
+        existing_follow_query
+    )
+
+    existing_follow = existing_follow_result.scalar_one_or_none()
+
+    if existing_follow:
+        return None
+
+    new_follow = Follow(
+        follower_id=current_user_id,
+        following_id=target_user_id
+    )
+
+    db.add(new_follow)
+    await db.commit()
+
+    return new_follow
+
+async def unfollow_user_profile_repo(
+
+    current_user_id: int,
+
+    db: AsyncSession,
+
+    target_user_id: int
+
+):
+
+    if current_user_id == target_user_id:
+        return None
+
+    existing_follow_query = (
+        select(Follow)
+        .where(
+            Follow.follower_id == current_user_id,
+            Follow.following_id == target_user_id
+        )
+    )
+
+    existing_follow_result = await db.execute(
+        existing_follow_query
+    )
+
+    existing_follow = existing_follow_result.scalar_one_or_none()
+
+    if not existing_follow:
+        return None
+
+    await db.delete(existing_follow)
+    await db.commit()
+
+    return existing_follow

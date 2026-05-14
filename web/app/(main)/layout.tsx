@@ -38,26 +38,21 @@ export default function MainLayout({
 </div>
 
   {/* Main Layout */}
-  <div className="flex flex-1 overflow-hidden justify-center gap-6">
+<div className="flex h-screen overflow-hidden">
 
-    {/* Left Sidebar */}
-    <aside className="flex-1 flex justify-end max-w-[260px] overflow-y-auto">
-  <div className="w-full p-4">
-    <LeftSidebar />
-  </div>
-</aside>
+  {/* Left Sidebar */}
+  <aside className="w-[260px] border-r sticky top-0 overflow-hidden">
+    <div className="p-4 h-full">
+      <LeftSidebar />
+    </div>
+  </aside>
 
-    {/* Feed */}
-    <main className="w-full max-w-2xl overflow-y-auto scrollbar-thin px-4">
-      {children}
-    </main>
+  {/* Dynamic Content */}
+  <main className="flex-1 overflow-y-auto">
+    {children}
+  </main>
 
-    {/* Right Sidebar */}
-    <aside className="flex-1 max-w-[320px] overflow-y-auto">
-      <RightSidebar />
-    </aside>
-
-  </div>
+</div>
 </div>
   )
 }

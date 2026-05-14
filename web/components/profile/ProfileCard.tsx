@@ -15,65 +15,39 @@ import { userService } from "@/lib/services/userService";
 import { useAuthStore } from "@/lib/stores/authStore";
 
 import type { ProfileResponse } from "@/types/profile";
+import { useProfile } from "@/lib/hooks/useProfile";
 
-export default function ProfileCard() {
-  const router = useRouter();
-
-  const pathname = usePathname();
+export default function ProfileCard({ username }: { username: string }) {
 
   const currentUser = useAuthStore((state) => state.user);
-
-  const [profile, setProfile] = useState<ProfileResponse | null>(null);
-
-  const [loading, setLoading] = useState(true);
-
   const [showEditModal, setShowEditModal] = useState(false);
+  const { profile, isLoading, isOwnProfile, toggleFollow, isFollowPending } =
+    useProfile(username);
+  const router = useRouter();
+  const pathname = usePathname();
 
-  useEffect(() => {
-    if (!currentUser?.id) return;
 
-    const fetchProfile = async () => {
-      try {
-        const data = await userService.getProfile(currentUser.id);
+  
 
-        setProfile(data);
-      } catch (error) {
-        console.error("Failed to fetch profile", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProfile();
-  }, [currentUser]);
-
-  if (loading) {
+  if (isLoading) {
     return <div className="p-6">Loading profile...</div>;
   }
 
   if (!profile) {
     return <div className="p-6">Failed to load profile</div>;
+  } 
+
+  const handleFollow = () => {
+    if (isFollowPending) return; // prevent spamming
+
+    toggleFollow();
   }
 
-  const handleCardClick = () => {
-    if (pathname !== "/profile") {
-      router.push("/profile");
-    }
-  };
 
-  const handleCardKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (pathname !== "/profile" && (e.key === "Enter" || e.key === " ")) {
-      e.preventDefault();
-      handleCardClick();
-    }
-  };
 
   const cardContent = (
     <div
-      onClick={handleCardClick}
-      onKeyDown={handleCardKeyDown}
-      role={pathname !== "/profile" ? "button" : undefined}
-      tabIndex={pathname !== "/profile" ? 0 : undefined}
+
       className="
         relative
         border-2
@@ -96,7 +70,7 @@ export default function ProfileCard() {
     >
       {/* BACK BUTTON */}
 
-      {pathname === "/profile" && (
+      
         <button
           onClick={() => router.back()}
           title="Go Back"
@@ -118,7 +92,7 @@ export default function ProfileCard() {
         >
           <ArrowLeft size={22} />
         </button>
-      )}
+      
 
       {/* PROFILE IMAGE */}
 
@@ -246,10 +220,11 @@ export default function ProfileCard() {
 
             cursor-pointer
           "
+          onClick={handleFollow}
         >
           {profile.is_following
             ? "Following"
-            : profile.follows_you
+            : profile.is_follower
               ? "Follow Back"
               : "Follow"}
         </button>

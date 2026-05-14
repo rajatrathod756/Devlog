@@ -100,7 +100,7 @@ export default function CreatePostModal({
         fixed
         inset-0
 
-        bg-black/50
+       
 
         flex
         items-center
@@ -112,7 +112,10 @@ export default function CreatePostModal({
 
       <div
         className="
-          bg-white
+          bg-primary-1
+          text-secondary-1
+          border
+          border-primary-2
 
           w-full
           max-w-lg
@@ -139,7 +142,7 @@ export default function CreatePostModal({
             absolute
             top-4
             right-4
-
+            text-secondary-1
             cursor-pointer
           "
         >

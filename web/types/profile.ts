@@ -17,5 +17,5 @@ export type ProfileResponse = {
 
   is_following: boolean
 
-  follows_you: boolean
+  is_follower: boolean
 }
