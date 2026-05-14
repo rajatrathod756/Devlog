@@ -1,3 +1,4 @@
+from app.schemas.user import UserSearchResponse
 from fastapi import APIRouter, Depends
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -123,10 +124,11 @@ async def update_profile(
     }
 
 
-@router.get("/search/{query}")
+@router.get("/search/{query}", response_model=UserSearchResponse)
 async def search_users(
     query: str,
     db: AsyncSession = Depends(get_db),
+   
 ):
 
     updatedUser = await search_users_service(
@@ -134,7 +136,6 @@ async def search_users(
             db=db
         );
 
-    
     if not updatedUser:
         raise HTTPException(
             status_code=404,

@@ -41,3 +41,7 @@ class UserUpdate(BaseModel):
     bio: str | None = None
 
     profile_image_url: str | None = None
+    
+    
+class UserSearchResponse(BaseModel):
+    users: list[UserPreview]
