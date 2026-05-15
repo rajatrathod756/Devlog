@@ -22,8 +22,8 @@ export default function CreatePostButton() {
         onClick={() => setOpen(true)}
 
         className="
-          bg-secondary-1
-          text-primary-2
+          bg-primary-2
+          text-secondary-1
 
           px-6
           py-3

@@ -17,9 +17,9 @@ export default function SearchBar() {
            router.push("/");
           }
       };
-      const selectUser = (id : string) => {
+      const selectUser = (username : string) => {
         setQuery("");
-        router.push(`/profile/${id}`);
+        router.push(`/profile/${username}`);
       };
     
 
@@ -38,7 +38,7 @@ export default function SearchBar() {
         <div className="absolute top-full w-full bg-primary-1 rounded-lg shadow-lg z-50 border border-secondary-2">
           {results.map((user) => (
             <div
-                onClick={() => selectUser(user.id)}
+                onClick={() => selectUser(user.username)}
                 key={user.id}
                 className="p-3 border border-transparent hover:border-[var(--color-secondary-2)] rounded-lg cursor-pointer text-secondary-1 flex items-center gap-3 transition-colors">
               <img src={user.profile_image_url} className="w-8 h-8 rounded-full border-2 border-primary-2" />

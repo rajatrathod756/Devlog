@@ -1,6 +1,6 @@
 from app.schemas.user import UserSearchResponse
 from fastapi import APIRouter, Depends
-
+from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from fastapi import (
@@ -22,7 +22,9 @@ from app.services.user_service import (
     get_current_user_posts_service,
     get_user_profile_service,
     update_profile_service,
-    search_users_service
+    search_users_service,
+    follow_user_profile_service,
+    unfollow_user_profile_service
 )
 
 router = APIRouter()
@@ -45,17 +47,18 @@ async def get_my_posts(
 
 
 @router.get(
-    "/{user_id}",
+    "/{username}",
     response_model=ProfileResponse
 )
 async def get_user_profile(
-    user_id: int,
+    username: str,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
 
     profile = await get_user_profile_service(
-        profile_user_id=user_id,
+        profile_user_name=username,
+        current_user_name=current_user.username,
         current_user_id=current_user.id,
         db=db
     )
@@ -142,3 +145,35 @@ async def search_users(
             detail="No users found"
         )
     return updatedUser;
+
+@router.post("/{user_id}/follow")
+async def follow_user(
+    user_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    
+    profile = await follow_user_profile_service(
+        
+        current_user_id=current_user.id,
+        db=db,
+        target_user_id=user_id
+    )
+    return profile
+
+
+@router.delete("/{user_id}/follow")
+async def unfollow_user(
+    user_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    
+    profile = await unfollow_user_profile_service(
+        
+        current_user_id=current_user.id,
+        db=db,
+        target_user_id=user_id
+    )
+    return profile
+    

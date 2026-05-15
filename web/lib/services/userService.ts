@@ -5,10 +5,10 @@ import {
 } from "@/lib/stores/authStore"
 
 export const userService = {
-  getProfile: async (userId: number) => {
+  getProfile: async (username: string) => {
 
     const data = await userApi.getProfile(
-      userId
+      username
     )
 
     return data
@@ -50,6 +50,12 @@ export const userService = {
   searchUsers: async (query : string) => {
     const data = await userApi.searchUsers(query)
     return data
-  }
+  },
+  followUser: async (userId: number) => {
+    await userApi.followUser(userId)
+  },
+  unfollowUser: async (userId: number) => {
+    await userApi.unfollowUser(userId)
+  },
 }
 

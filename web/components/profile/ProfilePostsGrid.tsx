@@ -8,7 +8,7 @@ import type { UserPost } from "@/types/post";
 
 import PostGridItem from "@/components/posts/PostGridItem";
 
-export default function ProfilePostsGrid() {
+export default function ProfilePostsGrid({ username }: { username: string }) {
   const [posts, setPosts] = useState<UserPost[]>([]);
 
   const [cursor, setCursor] = useState<number | null>(null);

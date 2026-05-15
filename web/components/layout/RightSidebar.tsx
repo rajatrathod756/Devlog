@@ -20,16 +20,15 @@ export default function RightSidebar() {
       "
     >
 
-      <ProfileCard />
-
       <div
         className="
           flex
           justify-center
         "
       >
+        {/* // PLACEHOLDER FOR FUTURE CONTENT */}
 
-        <CreatePostButton />
+        
 
       </div>
 
