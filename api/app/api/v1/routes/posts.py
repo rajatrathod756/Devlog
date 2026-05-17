@@ -16,7 +16,7 @@ from app.api.dependencies.auth import get_current_user
 
 from app.models.user import User
 
-from app.schemas.post import PostResponse
+from app.schemas.post import PostResponse, PostsList
 
 from app.schemas.comment import (
     CommentCreate,
@@ -32,6 +32,7 @@ from app.services.post_service import (
     get_post_service,
     like_post_service,
     unlike_post_service,
+    get_posts_service
 )
 
 router = APIRouter()
@@ -100,6 +101,28 @@ async def get_post(
         "comments": post.comments[:2],
         "created_at": post.created_at,
     }
+
+@router.get(
+    "/for-user/{user_id}",
+    response_model=list[PostsList]
+)
+async def get_posts(
+    user_id: int,
+    db: AsyncSession = Depends(get_db)
+):
+
+    posts = await get_posts_service(
+        user_id,
+        db
+    )
+
+    if not posts:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Posts not found"
+        )
+
+    return posts
 
 @router.post("/{post_id}/like")
 async def like_post(

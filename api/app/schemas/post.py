@@ -22,3 +22,12 @@ class PostResponse(BaseModel):
 
     class Config:
         from_attributes = True
+        
+class PostsList(BaseModel):
+    id: int
+    image_url: str
+
+    user: UserPreview
+
+    created_at: datetime
+    

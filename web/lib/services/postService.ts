@@ -12,6 +12,11 @@ export const postService = {
     return post;
   },
 
+  getPostsByUser: async (userId: number, cursor: number | null = null) => {
+    const data = await postsApi.getPostsByUser(userId, cursor);
+    return data;
+  },
+
   createPost: async (payload: FormData) => {
     return postsApi.create(payload);
   },

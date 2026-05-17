@@ -13,14 +13,7 @@ export const userService = {
 
     return data
   },
-  getMyPosts: async (
-  cursor?: number
-) => {
 
-  return await userApi.getMyPosts(
-    cursor
-  )
-},
  updateProfile: async (
 
     payload: FormData

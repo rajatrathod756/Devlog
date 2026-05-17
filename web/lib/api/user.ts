@@ -5,11 +5,7 @@ import type { UserPostsResponse } from "@/types/post";
 
 export const userApi = {
   getProfile: (username: string) => http.get<ProfileResponse>(`/users/${username}`),
-  getMyPosts: (cursor?: number) => {
-    const query = cursor ? `?cursor=${cursor}` : "";
 
-    return http.get<UserPostsResponse>(`/users/me/posts${query}`);
-  },
   updateMe: (payload: FormData) =>
     http.patch(
       "/users/me",
