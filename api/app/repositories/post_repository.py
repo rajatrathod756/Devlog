@@ -8,6 +8,7 @@ from app.models.post import Post
 from app.models.like import Like
 from app.models.comment import Comment
 
+from app.repositories.notification_repository import create_notification_repo
 
 
 async def create_post_repo(
@@ -76,26 +77,63 @@ async def get_posts_repo(
 
 
 async def like_post_repo(
+
     post_id: int,
+
     user_id: int,
+
     db: AsyncSession
 ):
 
+    # CHECK IF ALREADY LIKED
+
     existing_like = await db.scalar(
+
         select(Like).where(
+
             Like.post_id == post_id,
+
             Like.user_id == user_id
         )
     )
 
+
     if existing_like:
+
         raise HTTPException(
+
             status_code=400,
+
             detail="Post already liked"
         )
 
+
+    # GET POST
+
+    post = await db.scalar(
+
+        select(Post)
+
+        .where(Post.id == post_id)
+    )
+
+
+    if not post:
+
+        raise HTTPException(
+
+            status_code=404,
+
+            detail="Post not found"
+        )
+
+
+    # CREATE LIKE
+
     like = Like(
+
         post_id=post_id,
+
         user_id=user_id
     )
 
@@ -103,13 +141,43 @@ async def like_post_repo(
 
     await db.flush()
 
+
+    # CREATE NOTIFICATION
+
+    if post.user_id != user_id:
+
+        await create_notification_repo(
+
+            recipient_id=post.user_id,
+
+            actor_id=user_id,
+
+            type="like",
+
+            post_id=post_id,
+
+            comment_id=None,
+
+            db=db
+        )
+
+
+    # GET UPDATED LIKES COUNT
+
     likes_count = await db.scalar(
+
         select(func.count())
+
         .select_from(Like)
-        .where(Like.post_id == post_id)
+
+        .where(
+            Like.post_id == post_id
+        )
     )
 
+
     await db.commit()
+
 
     return {
         "post_id": post_id,

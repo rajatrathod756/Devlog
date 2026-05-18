@@ -16,6 +16,8 @@ from app.models.user import User
 from app.models.post import Post
 from app.models.follow import Follow
 
+from app.repositories.notification_repository import create_notification_repo
+
 
 async def get_current_user_posts_repo(
     user_id: int,
@@ -293,6 +295,22 @@ async def follow_user_profile_repo(
     )
 
     db.add(new_follow)
+
+    await create_notification_repo(
+
+            recipient_id=target_user_id,
+
+            actor_id=current_user_id,
+
+            type="follow",
+
+            post_id=None,
+
+            comment_id=None,
+
+            db=db
+        )
+
     await db.commit()
 
     return new_follow

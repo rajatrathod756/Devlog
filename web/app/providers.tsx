@@ -36,7 +36,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider initialTheme="dark">
+      <ThemeProvider initialTheme="light">
         {children}
       </ThemeProvider>
     </QueryClientProvider>
