@@ -1,6 +1,7 @@
 import { http } from "@/lib/http";
 import type { PostFeedItem } from "@/types/feed";
 import type { Post } from "@/types";
+import { getPossibleInstrumentationHookFilenames } from "next/dist/build/utils";
 
 type FeedResponse = {
   posts: PostFeedItem[];
@@ -16,6 +17,10 @@ export const postsApi = {
     ),
 
   getById: (postId: number) => http.get<Post>(`/posts/${postId}`),
+
+  getPostsByUser: (userId: number) => {
+    return http.get<Post[]>(`/posts/for-user/${userId}`);
+  },
 
   create: (payload: FormData) => http.post<Post>("/posts/", payload),
 

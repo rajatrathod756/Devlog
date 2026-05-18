@@ -38,7 +38,7 @@ export default function Post({
 
   const {
     toggleLikeMutation
-  } = usePostMutations();
+  } = usePostMutations(post.id);
 
   const [showCommentBox, setShowCommentBox] =
     useState(false);

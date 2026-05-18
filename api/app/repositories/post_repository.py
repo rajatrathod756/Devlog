@@ -58,6 +58,23 @@ async def get_post_repo(
 
     return result.scalar_one_or_none()
 
+async def get_posts_repo(
+    user_id: int,
+    db: AsyncSession
+):
+    query = (
+        select(Post)
+        .options(
+            selectinload(Post.user),
+        )
+        .where(Post.user_id == user_id)
+        .order_by(Post.created_at.desc())
+    )
+
+    result = await db.execute(query)
+    return result.scalars().all()
+
+
 async def like_post_repo(
     post_id: int,
     user_id: int,

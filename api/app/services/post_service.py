@@ -6,7 +6,8 @@ from app.repositories.post_repository import (
     create_post_repo,
     get_post_repo,
     like_post_repo,
-    unlike_post_repo
+    unlike_post_repo,
+    get_posts_repo
 )
 
 
@@ -38,6 +39,17 @@ async def get_post_service(
         post_id,
         db
     )
+    
+async def get_posts_service(
+    user_id: int,
+    db: AsyncSession
+):
+
+    return await get_posts_repo(
+        user_id,
+        db
+    )
+   
 async def like_post_service(
     post_id: int,
     user_id: int,

@@ -7,6 +7,7 @@ import {
   Bookmark,
   LogOut,
 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 import NavItem from './NavItem'
 
@@ -14,12 +15,15 @@ import { logout } from '@/lib/utils/logout'
 
 export default function NavigationMenu() {
 
+  const router = useRouter()
+
   return (
     <nav className="flex flex-col gap-2">
 
       <NavItem
         label="Home"
         icon={<Home size={18} />}
+        onClick={() => {router.push("/")}}
       />
 
       <NavItem

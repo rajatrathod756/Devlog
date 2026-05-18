@@ -1,23 +1,24 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { postService } from '@/lib/services/postService'
 
-export function usePostMutations() {
+export function usePostMutations(id: number) {
+  const postQuery = useQuery({
+    queryKey: ['posts', id],
+    queryFn: () => postService.getPostsByUser(id),
+  })
 
-    const toggleLikeMutation = useMutation({
+  const toggleLikeMutation = useMutation({
     mutationFn: ({
       postId,
-      isLiked
+      isLiked,
     }: {
       postId: number
       isLiked: boolean
-    }) =>
-      postService.toggleLike(postId, isLiked),
-
-    
+    }) => postService.toggleLike(postId, isLiked),
   })
 
-
   return {
-    toggleLikeMutation
+    postQuery,
+    toggleLikeMutation,
   }
 }
