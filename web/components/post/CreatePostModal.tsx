@@ -1,317 +1,148 @@
 'use client'
 
-import {
-  useState
-} from "react"
-
-import {
-  X
-} from "lucide-react"
-
-import {
-  postService
-} from "@/lib/services/postService"
-
+import { useEffect, useRef, useState } from "react"
+import { X } from "lucide-react"
+import { postService } from "@/lib/services/postService"
 
 type CreatePostModalProps = {
-
   isOpen: boolean
-
   onClose: () => void
-
   onPostCreated?: () => void
 }
 
-
 export default function CreatePostModal({
-
   isOpen,
-
   onClose,
-
-  onPostCreated
-
+  onPostCreated,
 }: CreatePostModalProps) {
+  const [image, setImage] = useState<File | null>(null)
+  const [caption, setCaption] = useState("")
+  const [loading, setLoading] = useState(false)
 
-  const [image, setImage] =
-    useState<File | null>(null)
+  const previewUrl = useRef<string | null>(null)
 
-  const [caption, setCaption] =
-    useState("")
+  // Revoke previous URL before creating a new one — prevents memory leak
+  if (previewUrl.current) {
+    URL.revokeObjectURL(previewUrl.current)
+  }
+  previewUrl.current = image ? URL.createObjectURL(image) : null
 
-  const [loading, setLoading] =
-    useState(false)
+  // Revoke on unmount
+  useEffect(() => {
+    return () => {
+      if (previewUrl.current) URL.revokeObjectURL(previewUrl.current)
+    }
+  }, [])
 
+  // Reset form when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setImage(null)
+      setCaption("")
+      setLoading(false)
+    }
+  }, [isOpen])
 
   if (!isOpen) return null
 
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (file) setImage(file)
+  }
 
-  const handleSubmit = async () => {
+  function handleBackdropClick(e: React.MouseEvent<HTMLDivElement>) {
+    if (e.target === e.currentTarget) onClose()
+  }
 
+  async function handleSubmit() {
     if (!image) {
       alert("Please select image")
       return
     }
 
     try {
-
       setLoading(true)
 
       const formData = new FormData()
+      formData.append("image", image)
+      formData.append("caption", caption)
 
-      formData.append(
-        "image",
-        image
-      )
-
-      formData.append(
-        "caption",
-        caption
-      )
-
-      await postService.createPost(
-        formData
-      )
+      await postService.createPost(formData)
 
       onClose()
-
       onPostCreated?.()
 
       window.location.reload()
 
     } catch (error) {
-
-      console.error(
-        "Failed to create post",
-        error
-      )
-
+      console.error("Failed to create post", error)
     } finally {
-
       setLoading(false)
     }
   }
 
-
   return (
-
     <div
-      className="
-        fixed
-        inset-0
-
-       
-
-        flex
-        items-center
-        justify-center
-
-        z-50
-      "
+      onClick={handleBackdropClick}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
     >
+      <div className="relative flex w-full max-w-lg flex-col gap-5 rounded-2xl border border-primary-2 bg-primary-1 p-6 text-secondary-1 max-h-[90vh] overflow-y-auto sm:p-8">
 
-      <div
-        className="
-          bg-primary-1
-          text-secondary-1
-          border
-          border-primary-2
-
-          w-full
-          max-w-lg
-
-          rounded-2xl
-
-          p-6
-
-          relative
-
-          flex
-          flex-col
-
-          gap-5
-        "
-      >
-
-        {/* CLOSE */}
-
+        {/* Close */}
         <button
           onClick={onClose}
-
-          className="
-            absolute
-            top-4
-            right-4
-            text-secondary-1
-            cursor-pointer
-          "
+          aria-label="Close modal"
+          className="absolute right-4 top-4 cursor-pointer text-secondary-1 transition hover:opacity-70"
         >
-
           <X size={22} />
-
         </button>
 
+        {/* Title */}
+        <h2 className="text-2xl font-bold">Create Post</h2>
 
-        {/* TITLE */}
-
-        <h2
-          className="
-            text-2xl
-            font-bold
-          "
-        >
-          Create Post
-        </h2>
-
-
-        {/* FILE INPUT */}
-
-        <div
-          className="
-            flex
-            flex-col
-
-            gap-2
-          "
-        >
-
-          <label className="font-medium">
-            Upload Image
-          </label>
-
+        {/* Image upload */}
+        <div className="flex flex-col gap-2">
+          <label className="font-medium">Upload Image</label>
           <input
             type="file"
-
             accept="image/*"
-
-            onChange={(e) => {
-
-              if (
-                e.target.files &&
-                e.target.files[0]
-              ) {
-
-                setImage(
-                  e.target.files[0]
-                )
-              }
-            }}
-
-            className="
-              border
-
-              p-3
-
-              rounded-lg
-
-              cursor-pointer
-            "
+            onChange={handleFileChange}
+            className="cursor-pointer rounded-lg border p-3"
           />
-
         </div>
 
-
-        {/* PREVIEW */}
-
-        {image && (
-
+        {/* Preview */}
+        {previewUrl.current && (
           <img
-            src={URL.createObjectURL(image)}
-
-            alt="preview"
-
-            className="
-              w-full
-
-              max-h-80
-
-              object-cover
-
-              rounded-xl
-            "
+            src={previewUrl.current}
+            alt="Selected image preview"
+            className="max-h-80 w-full rounded-xl object-cover"
           />
         )}
 
-
-        {/* CAPTION */}
-
-        <div
-          className="
-            flex
-            flex-col
-
-            gap-2
-          "
-        >
-
-          <label className="font-medium">
-            Caption
-          </label>
-
+        {/* Caption */}
+        <div className="flex flex-col gap-2">
+          <label className="font-medium">Caption</label>
           <textarea
             value={caption}
-
-            onChange={(e) =>
-              setCaption(
-                e.target.value
-              )
-            }
-
-            placeholder="
-              Write a caption...
-            "
-
+            onChange={(e) => setCaption(e.target.value)}
+            placeholder="Write a caption..."
             rows={4}
-
-            className="
-              border
-
-              rounded-lg
-
-              p-3
-
-              resize-none
-            "
+            className="resize-none rounded-lg border p-3"
           />
-
         </div>
 
-
-        {/* BUTTON */}
-
+        {/* Submit */}
         <button
           onClick={handleSubmit}
-
           disabled={loading}
-
-          className={`
-            bg-secondary-1
-            text-primary-2
-
-            py-3
-
-            rounded-xl
-
-            font-semibold
-
-            transition
-
-            ${
-              loading
-                ? "opacity-50 cursor-not-allowed"
-                : "cursor-pointer hover:opacity-90"
-            }
-          `}
+          className={`rounded-xl bg-secondary-1 py-3 font-semibold text-primary-2 transition ${
+            loading ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:opacity-90"
+          }`}
         >
-
-          {loading
-            ? "Posting..."
-            : "Post"}
-
+          {loading ? "Posting..." : "Post"}
         </button>
-
       </div>
-
     </div>
   )
 }
