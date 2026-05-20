@@ -57,10 +57,10 @@ export default function LoginPage() {
   // }, []);
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-primary-1 via-primary-1 via-10% to-primary-2">
       <form
         onSubmit={handleLogin}
-        className="flex w-full max-w-sm flex-col gap-4 border p-6 rounded-lg border-secondary-1"
+        className="flex w-full max-w-sm flex-col gap-4 border p-6 rounded-lg border-secondary-1 shadow-[0_0_30px_rgba(41,96,234,0.45),0_0_60px_rgba(41,96,234,0.35),0_0_100px_rgba(41,96,234,0.25)]"
       >
         <h1 className="text-2xl font-bold text-secondary-1">Login</h1>
 
