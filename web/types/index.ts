@@ -33,6 +33,7 @@ export type LoginPayload = {
 export interface LoginResponse {
   access_token: string
   token_type: string
+  user: UserResponse
 }
 
 export type SignupPayload = {
@@ -47,6 +48,7 @@ export type UserResponse = {
   email: string
   profile_image_url?: string
   created_at: string
+  bio: string
 }
 
 export type User = {
@@ -55,4 +57,5 @@ export type User = {
   email: string
   profile_image_url?: string
   created_at: string
+  bio: string
 }
