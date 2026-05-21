@@ -38,7 +38,7 @@ export default function LoginPage() {
 
       // assuming backend returns { access_token: "token_here" }
       // localStorage.setItem("token", response.access_token);
-      localStorage.setItem("user_id", response.user_id);
+      localStorage.setItem("user_id", response.user.id.toString());
       // navigate to home page
       router.push("/");
     } catch (error) {
