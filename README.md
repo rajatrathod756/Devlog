@@ -4,7 +4,7 @@ Live: http://parca.in
 
 A full-stack social media platform for developers to share their 
 learning journey, projects, and progress. Built with Next.js 15, 
-TypeScript, FastAPI, and PostgreSQL — deployed on AWS EC2.
+TypeScript, FastAPI, and PostgreSQL -> deployed on AWS EC2.
 
 ## Tech Stack
 
